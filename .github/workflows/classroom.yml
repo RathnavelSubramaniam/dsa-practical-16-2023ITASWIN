@@ -1,0 +1,43 @@
+name: Autograding Tests
+'on':
+- push
+- repository_dispatch
+permissions:
+  checks: write
+  actions: read
+  contents: read
+jobs:
+  run-autograding-tests:
+    runs-on: ubuntu-latest
+    if: github.actor != 'github-classroom[bot]'
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    - name: test1
+      id: test1
+      uses: classroom-resources/autograding-io-grader@v1
+      with:
+        test-name: test1
+        setup-command: ''
+        command: javac ArrayDeQueue.java && java ArrayDeQueue
+        input: 5 y y y y y y n
+        expected-output: "DeQueue Using Array\nEnter the number of elements to be
+          inserted:\nQueue Using Array created with size 5\nQueue Elements\n1\t2\t3\t4\t5\t\nDo
+          you want to Dequeue the Queue(y/n):\nDeleted Element is:1\nAfter Dequeue\nQueue
+          Elements\n2\t3\t4\t5\t\nDo you want to Dequeue the Queue(y/n):\nDeleted
+          Element is:2\nAfter Dequeue\nQueue Elements\n3\t4\t5\t\nDo you want to Dequeue
+          the Queue(y/n):\nDeleted Element is:3\nAfter Dequeue\nQueue Elements\n4\t5\t\nDo
+          you want to Dequeue the Queue(y/n):\nDeleted Element is:4\nAfter Dequeue\nQueue
+          Elements\n5\t\nDo you want to Dequeue the Queue(y/n):\nDeleted Element is:5\nAfter
+          Dequeue\nQueue is Underflow. No elements to display in Empty Queue\nDo you
+          want to Dequeue the Queue(y/n):\nQueue is Underflow. No elements to be deleted
+          in Empty Queue\nDo you want to Dequeue the Queue(y/n):"
+        comparison-method: exact
+        timeout: 10
+        max-score: 10
+    - name: Autograding Reporter
+      uses: classroom-resources/autograding-grading-reporter@v1
+      env:
+        TEST1_RESULTS: "${{steps.test1.outputs.result}}"
+      with:
+        runners: test1
